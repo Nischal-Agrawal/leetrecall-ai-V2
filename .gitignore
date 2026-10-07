@@ -1,0 +1,13 @@
+venv/
+node_modules/
+__pycache__/
+*.pyc
+*.pyo
+*.db
+.env
+.pytest_cache/
+.ipynb_checkpoints/
+.vscode/
+.idea/
+frontend/dist/
+frontend/.vite/

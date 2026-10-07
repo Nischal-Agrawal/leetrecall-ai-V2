@@ -1,0 +1,29 @@
+{
+  "version": 2,
+  "buildCommand": "npm run build",
+  "outputDirectory": "frontend/dist",
+  "rewrites": [
+    {
+      "source": "/api/ml/predict",
+      "destination": "/api/ml/predict.py"
+    },
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ],
+  "functions": {
+    "api/index.js": {
+      "maxDuration": 60,
+      "includeFiles": "datasets/contest/sample_contest.csv"
+    },
+    "api/ml/predict.py": {
+      "maxDuration": 60,
+      "includeFiles": "ml/artifacts/xgboost_model.pkl"
+    }
+  }
+}

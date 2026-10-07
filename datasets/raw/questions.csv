@@ -1,0 +1,6 @@
+question_id,title,platform,topic,pattern,difficulty,tags,url
+1,Two Sum,LeetCode,Arrays,Hashing,Easy,"array,hashmap",https://leetcode.com/problems/two-sum
+2,Best Time to Buy and Sell Stock,LeetCode,Arrays,Kadane Variation,Easy,"array,greedy",https://leetcode.com/problems/best-time-to-buy-and-sell-stock
+3,Contains Duplicate,LeetCode,Arrays,Hashing,Easy,"array,set",https://leetcode.com/problems/contains-duplicate
+4,3Sum,LeetCode,Arrays,Two Pointers,Medium,"array,two pointers",https://leetcode.com/problems/3sum
+5,Container With Most Water,LeetCode,Arrays,Two Pointers,Medium,"array,two pointers",https://leetcode.com/problems/container-with-most-water

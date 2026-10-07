@@ -1,0 +1,1535 @@
+You are working on my existing project:
+
+# LEETRECALL AI
+Intelligent DSA Revision & Knowledge Retention Platform
+
+I am giving you the COMPLETE existing project repository.
+
+Your task is to **migrate the existing application from Streamlit + FastAPI to React + Node.js/Express while preserving the existing application logic, ML pipeline, database, features, API behavior, and project purpose.**
+
+This is a migration/refactoring task, NOT a redesign of the underlying product.
+
+The final project should feel like the same LeetRecall AI application implemented with a modern full-stack architecture.
+
+==================================================
+# 1. PRIMARY OBJECTIVE
+==================================================
+
+Current architecture:
+
+Streamlit Frontend
+        ↓
+FastAPI Backend
+        ↓
+Python Services / ML
+        ↓
+Neon PostgreSQL
+
+Target architecture:
+
+React + Vite Frontend
+        ↓
+Node.js + Express Backend
+        ↓
+PostgreSQL
+        ↓
+Existing ML / Recommendation Logic
+        ↓
+XGBoost
+
+The final deployed application must use:
+
+ONE VERCEL PROJECT
+ONE WEBSITE / ONE DOMAIN
+ONE USER-FACING APPLICATION
+
+There must NOT be:
+
+- separate frontend website
+- separate backend website
+- Render frontend
+- Render backend
+- Streamlit Cloud
+- separate public backend URL
+
+Everything should be accessible from one domain.
+
+Example:
+
+https://leetrecall.vercel.app
+
+Frontend:
+
+https://leetrecall.vercel.app/
+
+Backend:
+
+https://leetrecall.vercel.app/api/...
+
+ML inference:
+
+https://leetrecall.vercel.app/api/ml/...
+
+The user should never need to know that different runtimes are being used internally.
+
+==================================================
+# 2. CRITICAL PRESERVATION RULE
+==================================================
+
+DO NOT change the core functionality of LeetRecall AI.
+
+DO NOT redesign the ML concept.
+
+DO NOT replace the existing trained model with a fake/simple JavaScript algorithm.
+
+DO NOT remove existing features merely because they are difficult to migrate.
+
+DO NOT retrain the model unless absolutely necessary.
+
+DO NOT change the meaning of existing database records.
+
+DO NOT randomly change API response structures when an existing response contract can be preserved.
+
+DO NOT invent fake statistics.
+
+DO NOT replace real backend/database logic with mock data.
+
+DO NOT remove AI functionality just because AI APIs are optional.
+
+The current ML system, recommendation logic, database design, features and business logic should remain conceptually the same.
+
+Only the application layer is being modernized.
+
+==================================================
+# 3. TECHNOLOGY TARGET
+==================================================
+
+Use:
+
+FRONTEND
+- React
+- Vite
+- React Router
+- JavaScript or JSX
+- Tailwind CSS
+- Lucide React icons
+- Recharts for charts/visualizations
+
+BACKEND
+- Node.js
+- Express
+- REST APIs
+- Prisma OR PostgreSQL driver, whichever preserves the existing database most safely
+
+ML
+- KEEP EXISTING PYTHON ML CODE
+- KEEP EXISTING XGBoost model
+- KEEP EXISTING model artifacts
+- KEEP existing preprocessing/feature mapping
+- KEEP existing recommendation methodology
+
+DATABASE
+- Existing PostgreSQL database
+- Preserve current tables and relationships
+- Do not destroy or recreate production data unnecessarily
+
+AUTHENTICATION
+- Preserve current authentication behavior
+- Password hashing
+- JWT/session behavior
+- Protected routes
+
+AI
+- Preserve existing OpenAI/Gemini functionality
+- Keep API keys server-side only
+
+==================================================
+# 4. IMPORTANT ML ARCHITECTURE DECISION
+==================================================
+
+The main application backend must become Node.js/Express.
+
+However, the trained XGBoost model is Python-native and already exists.
+
+DO NOT rewrite the ML model in JavaScript merely to force everything into one language.
+
+Instead:
+
+Node.js / Express
+        ↓
+/api/ml/...
+        ↓
+Python Vercel Function
+        ↓
+Existing XGBoost model
+        ↓
+Prediction JSON
+        ↓
+Node.js
+        ↓
+React
+
+The Python portion should be limited to ML inference.
+
+The existing:
+
+- XGBoost model
+- preprocessing logic
+- feature mapping
+- recommendation logic
+- ML artifacts
+
+must be preserved.
+
+Create a clean Python serverless inference entry point under a Vercel-compatible location such as:
+
+api/ml/predict.py
+
+or another structure that is valid for the current Vercel Python runtime.
+
+The Node backend should call the Python ML function through an internal same-domain API route.
+
+The final user still sees only one website.
+
+Explain this architecture in README because this is an intentional engineering decision.
+
+==================================================
+# 5. FIRST STEP — AUDIT THE REPOSITORY
+==================================================
+
+Before modifying code, inspect the entire repository.
+
+Understand:
+
+- frontend/app.py
+- frontend/Home.py
+- every FastAPI router
+- every service
+- every model
+- every schema
+- every database file
+- every ML file
+- every AI integration
+- README
+- database schema
+- environment variables
+- deployment configuration
+
+Build a feature inventory internally before implementation.
+
+Identify all currently implemented functionality.
+
+The existing backend contains functionality around:
+
+- authentication
+- users
+- questions
+- solves
+- revisions
+- dashboard statistics
+- recommendations
+- AI coach
+- OpenAI coach
+- dynamic AI coach
+- topic mastery
+- pattern coverage
+- weak topics
+- weak patterns
+- contest analysis
+- contest AI
+- interview mode
+- interview AI/planner
+
+Preserve all applicable functionality.
+
+If any referenced legacy file is missing or inconsistent, investigate the existing models/services/schema and repair the integration using the actual project logic rather than inventing unrelated behavior.
+
+==================================================
+# 6. FEATURE PARITY
+==================================================
+
+The React application must provide feature parity with the existing Streamlit application.
+
+At minimum preserve:
+
+AUTHENTICATION
+- Login
+- Signup
+- Logout
+- Session persistence
+- Protected application routes
+
+DASHBOARD
+- Overall statistics
+- Learning statistics
+- Recommendation information
+- Charts
+- Progress information
+
+QUESTIONS
+- Questions listing
+- Question information
+- Existing question data
+- Existing question-related operations
+
+SOLVES
+- Solved question tracking
+- Wrong attempts
+- Hints
+- Confidence
+- Related statistics
+
+REVISIONS
+- Revision tracking
+- Revision history
+- Revision-related analytics
+
+RECOMMENDATIONS
+- ML-generated revision recommendations
+- Forget probability
+- Prioritization
+
+KNOWLEDGE DECAY
+- Existing retention/forgetting analysis
+- Existing charts/data
+
+TOPIC MASTERY
+- Topic statistics
+- Mastery visualization
+
+PATTERN COVERAGE
+- Pattern statistics
+- Pattern visualization
+
+WEAK TOPICS
+- Weak topic detection and display
+
+WEAK PATTERNS
+- Weak pattern detection and display
+
+CONTEST ANALYSIS
+- Existing contest analysis
+- Existing metrics
+- Existing AI analysis where applicable
+
+AI COACH
+- Existing AI coach functionality
+- Existing request flow
+- Existing responses
+
+OPENAI COACH
+- Preserve current OpenAI functionality where implemented
+
+DYNAMIC AI COACH
+- Preserve current dynamic AI functionality
+
+INTERVIEW MODE
+- Preserve interview-related functionality
+
+INTERVIEW AI / PLANNER
+- Preserve current functionality
+
+Do not remove a feature only because the React version needs a different UI.
+
+==================================================
+# 7. API MIGRATION
+==================================================
+
+Create an organized Node.js/Express backend.
+
+Recommended:
+
+server/
+  src/
+    config/
+    middleware/
+    routes/
+    controllers/
+    services/
+    repositories/
+    validators/
+    utils/
+    app.js
+
+Keep responsibilities separated.
+
+Do not create one giant server.js containing all business logic.
+
+Create REST routes corresponding to the existing FastAPI functionality.
+
+Existing route families include:
+
+/users
+/questions
+/solves
+/revisions
+/dashboard
+/recommendations
+/ai-coach
+/openai-coach
+/dynamic-ai-coach
+/topic-mastery
+/pattern-coverage
+/weak-topics
+/weak-patterns
+/contest-analyzer
+/contest-ai
+/interview-mode
+/interview-ai
+
+Authentication endpoints should be preserved conceptually under an appropriate `/api/auth/...` structure.
+
+Before implementing each route, inspect the current FastAPI implementation and reproduce its real behavior.
+
+Do not blindly create placeholder endpoints.
+
+==================================================
+# 8. DATABASE
+==================================================
+
+The current application uses PostgreSQL.
+
+Preserve the existing schema.
+
+Use the existing database schema documentation and SQLAlchemy models as the source of truth.
+
+Do not silently rename tables or columns without a migration reason.
+
+Prefer Prisma if it can safely introspect and preserve the existing PostgreSQL schema.
+
+If Prisma would require destructive schema changes, use the PostgreSQL driver and SQL instead.
+
+Database preservation is more important than using an ORM.
+
+Never run destructive database commands against an existing database.
+
+Do not drop tables.
+
+Do not reset the database.
+
+Do not modify existing user/question/solve/revision data merely to make the new backend easier.
+
+==================================================
+# 9. AUTHENTICATION
+==================================================
+
+Preserve the existing authentication behavior.
+
+Use secure password hashing.
+
+Use JWT authentication.
+
+Prefer HTTP-only cookies for browser authentication.
+
+Never put secrets in React code.
+
+Never put API keys in VITE_ environment variables.
+
+The browser should only communicate with:
+
+/api/...
+
+The browser must NOT directly call:
+
+- OpenAI
+- Gemini
+- database
+- Python model file
+
+The server is responsible for credentials and protected operations.
+
+Implement authentication middleware in Express.
+
+Implement authorization consistently.
+
+Prevent users from accessing another user's private data.
+
+==================================================
+# 10. ML PRESERVATION
+==================================================
+
+The existing ML project is one of the most important parts of LeetRecall.
+
+KEEP:
+
+ml/
+  artifacts/
+  models/
+  preprocessing/
+  recommendation/
+  training/
+  datasets/
+
+Preserve the existing:
+
+- xgboost_model.pkl
+- random_forest_model.pkl
+- preprocessing logic
+- feature mapping
+- model inference behavior
+- recommendation scoring
+- forget probability calculation
+
+Do not replace the XGBoost model with:
+- random values
+- hardcoded probabilities
+- JavaScript approximations
+- fake recommendations
+- simplistic if/else logic
+
+The current prediction inputs such as:
+
+days_since_solved
+difficulty
+wrong_attempts
+hints_used
+confidence_score
+revision_count
+
+must continue to be processed consistently with the existing model.
+
+The meaning of the model output must remain unchanged.
+
+If the existing recommendation logic calculates:
+
+remember probability
+→ forget probability
+→ sorting/prioritization
+
+preserve that logic.
+
+==================================================
+# 11. AI INTEGRATION
+==================================================
+
+The project currently contains AI functionality.
+
+Preserve the existing AI functionality.
+
+Keep AI credentials server-side.
+
+Support environment variables for the existing providers.
+
+Do not expose:
+
+OPENAI_API_KEY
+
+or:
+
+GEMINI_API_KEY
+
+to the browser.
+
+Use server-side API calls.
+
+Implement graceful failure.
+
+If the AI provider is unavailable, the non-AI parts of the application should continue working whenever possible.
+
+Do not fabricate an AI response if the provider fails.
+
+Show a clean user-facing error state.
+
+==================================================
+# 12. REACT APPLICATION ARCHITECTURE
+==================================================
+
+Create a clean React structure.
+
+Recommended:
+
+client/
+  src/
+    components/
+    layouts/
+    pages/
+    hooks/
+    context/
+    services/
+    utils/
+    charts/
+    auth/
+    App.jsx
+    main.jsx
+
+Create reusable components.
+
+Avoid putting the entire dashboard into one component.
+
+Use:
+
+- AuthContext
+- protected route component
+- API service layer
+- reusable cards
+- reusable chart components
+- reusable loading states
+- reusable error states
+- reusable empty states
+
+Use React hooks properly.
+
+Do not introduce unnecessary global state libraries.
+
+Keep architecture easy for a student to explain in an interview.
+
+==================================================
+# 13. UI / UX — MAKE IT SIGNIFICANTLY BETTER
+==================================================
+
+The new React UI should be substantially better than the Streamlit interface.
+
+Aim for a polished modern SaaS dashboard.
+
+Design direction:
+
+- premium
+- clean
+- professional
+- modern
+- responsive
+- visually consistent
+- suitable for an SDE portfolio
+- not overly flashy
+
+Use a dark-first design with excellent contrast.
+
+Support responsive desktop/tablet/mobile layouts.
+
+Use:
+
+- collapsible sidebar
+- top navigation/header
+- clean cards
+- subtle borders
+- rounded corners
+- modern typography
+- clean spacing
+- useful hover states
+- skeleton loading states
+- toast notifications
+- clear empty states
+- meaningful icons
+- smooth but restrained transitions
+
+Do NOT make it look like a generic bootstrap dashboard.
+
+Do NOT fill the interface with animations.
+
+Do NOT use huge distracting gradients everywhere.
+
+Do NOT add fake statistics just to make the dashboard look impressive.
+
+==================================================
+# 14. LANDING PAGE
+==================================================
+
+Create a modern public landing page for LeetRecall AI.
+
+It should clearly explain:
+
+"Predict. Analyze. Revise. Improve."
+
+Explain that LeetRecall predicts which DSA problems are likely to be forgotten and prioritizes revision.
+
+Include:
+
+- strong hero section
+- concise product explanation
+- feature cards
+- ML/recommendation explanation
+- analytics preview
+- CTA to login/signup
+
+This is a UI improvement and does not change the underlying product.
+
+==================================================
+# 15. LOGIN / SIGNUP
+==================================================
+
+Create professional login and signup pages.
+
+Include:
+
+- clean form
+- validation
+- password field
+- proper loading state
+- proper error state
+- success state
+- responsive design
+
+Do not overcomplicate authentication.
+
+==================================================
+# 16. DASHBOARD DESIGN
+==================================================
+
+The dashboard should become the main showcase page.
+
+Suggested structure:
+
+Sidebar
+
+Dashboard
+Revision Queue
+Questions
+Knowledge Decay
+Topic Mastery
+Pattern Coverage
+Weak Areas
+Contest Analysis
+AI Coach
+Interview Planner
+
+Top area:
+
+Good morning / Welcome back
+Short explanation of current learning status
+
+Metric cards:
+
+Questions Solved
+Revisions
+Average Confidence
+Current Weak Areas
+etc.
+
+Main visualization area:
+
+Knowledge Retention / Decay
+
+Recommendation section:
+
+"Recommended for Revision"
+
+Show:
+
+Question title
+Difficulty
+Topic
+Forget probability
+Priority indicator
+
+Additional analytics:
+
+Topic Mastery
+Pattern Coverage
+Recent Activity
+
+Every number must come from the actual backend.
+
+==================================================
+# 17. RECOMMENDATION UI
+==================================================
+
+Create an attractive revision queue.
+
+Each recommendation should clearly show:
+
+- Question title
+- Difficulty
+- Forget probability
+- Priority
+- Relevant topic/pattern if available
+
+Use visual indicators carefully.
+
+Example:
+
+HIGH PRIORITY
+Forget probability: 91%
+
+MEDIUM PRIORITY
+Forget probability: 64%
+
+Do not change the actual prediction.
+
+==================================================
+# 18. KNOWLEDGE DECAY UI
+==================================================
+
+Create a dedicated page showing retention/forgetting information.
+
+Use Recharts where suitable.
+
+Possible visualizations:
+
+- retention/forgetting trend
+- problem-level forgetting probability
+- revision history
+- priority distribution
+
+Everything must use real API data.
+
+==================================================
+# 19. TOPIC MASTERY
+==================================================
+
+Create a professional topic analytics page.
+
+Use visualizations such as:
+
+- horizontal bars
+- radar chart only if useful
+- mastery cards
+- topic table
+
+Make it easy to understand strengths and weaknesses.
+
+==================================================
+# 20. PATTERN COVERAGE
+==================================================
+
+Display algorithmic patterns clearly.
+
+Examples:
+
+Two Pointers
+Sliding Window
+BFS
+DFS
+Binary Search
+Greedy
+Dynamic Programming
+Backtracking
+
+Use actual backend data.
+
+==================================================
+# 21. WEAK AREAS
+==================================================
+
+Create one polished page for weak topics/patterns.
+
+Clearly communicate:
+
+"What should I revise next?"
+
+Highlight high-priority weaknesses.
+
+Do not generate fake recommendations.
+
+==================================================
+# 22. CONTEST ANALYSIS
+==================================================
+
+Preserve existing contest analytics.
+
+Use cards and charts.
+
+Show the same information the current system provides.
+
+Add clean explanatory labels so a user can understand the result.
+
+==================================================
+# 23. AI COACH
+==================================================
+
+Create a polished AI Coach interface.
+
+It should feel like an integrated learning assistant.
+
+Include:
+
+- prompt/input area
+- response area
+- loading state
+- error state
+- conversation/history behavior only if the existing functionality supports it
+
+Do not invent unsupported persistent chat functionality.
+
+Preserve current API behavior.
+
+==================================================
+# 24. INTERVIEW PLANNER
+==================================================
+
+Create a dedicated interview preparation interface.
+
+Use existing interview planner data.
+
+Present it as:
+
+- preparation roadmap
+- priorities
+- topics
+- recommendations
+- progress
+
+Do not invent metrics that do not already exist.
+
+==================================================
+# 25. API CLIENT
+==================================================
+
+Create one centralized API client.
+
+For example:
+
+client/src/services/api.js
+
+It should handle:
+
+- base URL
+- credentials/cookies
+- GET
+- POST
+- PUT
+- DELETE
+- common error handling
+
+In production:
+
+Use same-origin relative paths:
+
+/api/...
+
+Do NOT hardcode Render URLs.
+
+Do NOT hardcode localhost in production.
+
+For local development:
+
+Use Vite proxy or environment configuration.
+
+==================================================
+# 26. VERCEL DEPLOYMENT
+==================================================
+
+The final project MUST deploy as one Vercel project.
+
+Target structure should allow:
+
+React static frontend
++
+Node/Express API
++
+Python ML serverless function
+
+inside one Vercel deployment.
+
+Use current Vercel-compatible configuration.
+
+Create or update:
+
+vercel.json
+
+and appropriate package/build configuration.
+
+The exact implementation should follow the current official Vercel deployment model rather than outdated tutorials.
+
+The target behavior is:
+
+https://your-project.vercel.app/
+
+→ React application
+
+https://your-project.vercel.app/api/...
+
+→ Node/Express API
+
+https://your-project.vercel.app/api/ml/...
+
+→ Python ML inference
+
+Do not use separate hosting services.
+
+==================================================
+# 27. FREE DEPLOYMENT REQUIREMENT
+==================================================
+
+Use Vercel Hobby-compatible architecture.
+
+Do not introduce:
+
+- paid hosting
+- paid database
+- paid API gateway
+- Redis
+- Docker requirement
+- Kubernetes
+- AWS
+- Azure
+- GCP
+
+unless absolutely required by the existing project.
+
+Neon PostgreSQL can remain the database provider if the existing database is already there.
+
+AI APIs may remain optional and controlled by environment variables.
+
+The application should remain useful without an AI key wherever the existing architecture allows it.
+
+Optimize the application so the deployment is suitable for Vercel Hobby limits.
+
+Do not unnecessarily include:
+
+venv/
+node_modules/
+cache files
+.pyc files
+large unnecessary datasets
+development artifacts
+
+in the deployment bundle.
+
+==================================================
+# 28. ENVIRONMENT VARIABLES
+==================================================
+
+Create a safe:
+
+.env.example
+
+Never commit the actual .env file.
+
+Preserve required environment variable concepts such as:
+
+DATABASE_URL
+OPENAI_API_KEY
+GEMINI_API_KEY
+
+and add any required Node/ML configuration variables.
+
+For example:
+
+DATABASE_URL=
+JWT_SECRET=
+OPENAI_API_KEY=
+GEMINI_API_KEY=
+
+ML_SERVICE_URL=
+
+Only include variables that are actually required.
+
+Do not expose secrets to React.
+
+==================================================
+# 29. CLEAN REPOSITORY
+==================================================
+
+Remove from Git tracking:
+
+.env
+venv/
+node_modules/
+__pycache__/
+*.pyc
+
+Add appropriate entries to .gitignore.
+
+Do NOT delete useful source files.
+
+Do NOT delete training scripts merely because the production application does not use them at runtime.
+
+Keep training/research code because it is useful for demonstrating the ML pipeline.
+
+==================================================
+# 30. LOCAL DEVELOPMENT
+==================================================
+
+Provide a simple local development workflow.
+
+Preferred conceptual workflow:
+
+npm install
+npm run dev
+
+The developer should be able to run the application without manually changing API URLs throughout the code.
+
+Use a clean setup such as:
+
+React/Vite
+Node/Express
+Python ML function/service
+
+with appropriate local routing/proxying.
+
+If Vercel's local development tooling is the cleanest way to emulate the production architecture, use it and document it.
+
+Do not create an unnecessarily complicated local setup.
+
+==================================================
+# 31. PRODUCTION PERFORMANCE
+==================================================
+
+Optimize for a student portfolio project.
+
+Frontend:
+
+- lazy-load heavier pages where useful
+- avoid unnecessary renders
+- reusable components
+- proper loading states
+
+Backend:
+
+- reuse DB connections correctly
+- avoid repeated unnecessary database queries
+- validate inputs
+- proper error handling
+
+ML:
+
+- load the model efficiently
+- avoid retraining during API requests
+- use inference only
+- do not repeatedly perform expensive initialization if avoidable within the serverless runtime model
+
+==================================================
+# 32. ERROR HANDLING
+==================================================
+
+Every layer must have clean errors.
+
+Frontend:
+
+- API error message
+- loading state
+- empty state
+- retry where sensible
+
+Backend:
+
+- centralized error handler
+- meaningful status codes
+- validation errors
+- authentication errors
+- database errors
+
+ML:
+
+- invalid input validation
+- model loading errors
+- graceful failure
+
+Do not silently swallow all errors.
+
+==================================================
+# 33. SECURITY
+==================================================
+
+Preserve and improve security where reasonable.
+
+Include:
+
+- password hashing
+- HTTP-only cookies
+- secure authentication
+- input validation
+- authorization checks
+- CORS only where actually necessary
+- rate limiting for authentication endpoints where appropriate
+- server-side AI secrets
+- no secrets in Git
+- no secrets in frontend bundles
+
+Never trust a user-provided user ID when the authenticated identity is available.
+
+==================================================
+# 34. README UPDATE
+==================================================
+
+Completely update README.md after the migration.
+
+The README should accurately describe the NEW architecture.
+
+Include:
+
+Project overview
+Problem statement
+Features
+Technology stack
+Architecture
+ML pipeline
+API architecture
+Authentication
+Database
+Deployment
+Local setup
+Environment variables
+Project structure
+Design decisions
+Challenges
+Known limitations
+
+Explain clearly:
+
+React handles the user interface.
+
+Node.js/Express handles the main application backend.
+
+Python handles XGBoost inference.
+
+PostgreSQL stores application data.
+
+Vercel hosts the application under one domain.
+
+This is an intentional hybrid architecture because the ML model remains Python-native.
+
+==================================================
+# 35. ARCHITECTURE DIAGRAM
+==================================================
+
+Create/update an architecture diagram in the README:
+
+                    User
+                      │
+                      ▼
+             React + Vite
+                      │
+                HTTPS / REST
+                      │
+                      ▼
+             Node.js + Express
+          ┌───────────┼────────────┐
+          │           │            │
+          ▼           ▼            ▼
+       PostgreSQL   AI Services   ML API
+                                   │
+                                   ▼
+                             Python + XGBoost
+
+Deployment:
+
+                    Vercel
+         ┌────────────┼────────────┐
+         │            │            │
+       React       Node API    Python ML
+         │            │            │
+         └────────────┴────────────┘
+                      │
+                 One Domain
+
+Database:
+Neon PostgreSQL
+
+==================================================
+# 36. DO NOT OVERENGINEER
+==================================================
+
+Do NOT introduce:
+
+- Redux unless genuinely necessary
+- GraphQL
+- microservices everywhere
+- Redis
+- message queues
+- Kubernetes
+- Docker-only deployment
+- Elasticsearch
+- WebSockets unless already required
+- unnecessary design systems
+- unnecessary state libraries
+
+This is a student portfolio project.
+
+It should be:
+
+clean
+modular
+professional
+easy to defend
+easy to understand
+
+==================================================
+# 37. INTERVIEW DEFENSIBILITY
+==================================================
+
+This requirement is extremely important.
+
+The final project should be something I can genuinely explain in an interview.
+
+Prefer straightforward implementations.
+
+I should be able to explain:
+
+1. Why React?
+2. Why Node.js/Express?
+3. Why PostgreSQL?
+4. Why REST APIs?
+5. Why Python remains for ML?
+6. How React communicates with Express?
+7. How Express communicates with the ML layer?
+8. How authentication works?
+9. How XGBoost predicts forgetting probability?
+10. How recommendations are generated?
+11. How dashboard analytics are calculated?
+12. How the application is deployed on one Vercel domain?
+13. Why the application does not depend completely on AI?
+14. What happens if Gemini/OpenAI is unavailable?
+15. What are the main engineering tradeoffs?
+
+Do not create a system that looks sophisticated but is impossible to defend.
+
+==================================================
+# 38. MIGRATION STRATEGY
+==================================================
+
+Do the migration carefully.
+
+PHASE 1
+Audit existing repository.
+
+PHASE 2
+Create React frontend.
+
+PHASE 3
+Connect React to the existing API temporarily if useful to establish frontend parity.
+
+PHASE 4
+Create Node/Express backend.
+
+PHASE 5
+Port authentication and database operations.
+
+PHASE 6
+Port analytics/recommendation services.
+
+PHASE 7
+Connect ML inference.
+
+PHASE 8
+Port AI integrations.
+
+PHASE 9
+Remove Streamlit from the runtime.
+
+PHASE 10
+Remove FastAPI from the production runtime after feature parity is confirmed.
+
+PHASE 11
+Configure Vercel single-domain deployment.
+
+PHASE 12
+Test every major feature.
+
+Do not destroy the working implementation before the new implementation has equivalent behavior.
+
+==================================================
+# 39. TESTING
+==================================================
+
+Before declaring the migration complete, verify:
+
+Authentication
+- signup
+- login
+- logout
+- protected routes
+
+Dashboard
+- statistics load
+
+Questions
+- data loads
+- operations work
+
+Solves
+- create/read work
+
+Revisions
+- create/read work
+
+Recommendations
+- ML results load
+
+Knowledge decay
+- data loads
+
+Topic mastery
+- data loads
+
+Pattern coverage
+- data loads
+
+Weak topics
+- data loads
+
+Weak patterns
+- data loads
+
+Contest analysis
+- works
+
+AI Coach
+- works when API key exists
+- fails gracefully when key unavailable
+
+Interview planner
+- works
+
+ML inference
+- model loads
+- prediction output is valid
+- no fake outputs
+
+Deployment
+- homepage works
+- page refresh works on React routes
+- `/api/...` works
+- ML endpoint works
+- authentication works in production
+- cookies work correctly
+- database connection works
+
+==================================================
+# 40. IMPORTANT ROUTING REQUIREMENT
+==================================================
+
+React Router must work correctly on refresh.
+
+For example:
+
+/dashboard
+/recommendations
+/knowledge-decay
+/topic-mastery
+/pattern-coverage
+/contest-analysis
+/ai-coach
+/interview-planner
+
+must not return a Vercel 404 on page refresh.
+
+Configure Vercel rewrites correctly.
+
+API routes must remain separate from SPA rewrites.
+
+==================================================
+# 41. QUALITY BAR
+==================================================
+
+Do not stop after generating basic pages.
+
+The final React application should feel like a real product.
+
+Each page should have:
+
+- polished layout
+- consistent sidebar
+- consistent spacing
+- responsive design
+- loading states
+- error states
+- useful empty states
+- reusable components
+
+The UI should be visually cohesive across the entire application.
+
+Do not make one page highly polished and leave the others unfinished.
+
+==================================================
+# 42. SOURCE OF TRUTH RULE
+==================================================
+
+When there is a conflict between:
+
+- old README
+- comments
+- intended architecture
+- actual implementation
+
+prefer the ACTUAL WORKING CODE and DATABASE behavior.
+
+Do not blindly trust old documentation.
+
+Inspect the actual implementation before porting it.
+
+==================================================
+# 43. FINAL CLEANUP
+==================================================
+
+At the end:
+
+- remove Streamlit runtime dependencies
+- remove unnecessary FastAPI runtime dependencies
+- remove old Render-specific configuration
+- remove old frontend/backend URLs
+- remove hardcoded localhost production URLs
+- remove hardcoded Render URLs
+- remove obsolete deployment instructions
+- update README
+- update .gitignore
+- create .env.example
+- create proper package scripts
+- verify build
+
+Keep ML/research/training code.
+
+Do not accidentally delete the model artifacts required for inference.
+
+==================================================
+# 44. FINAL OUTPUT EXPECTATION
+==================================================
+
+Do the actual code migration.
+
+Do not merely provide instructions.
+
+Modify/create all required files.
+
+After implementation, provide a concise summary containing:
+
+1. What was migrated
+2. Final architecture
+3. Important files created
+4. Local run commands
+5. Vercel deployment steps
+6. Required environment variables
+7. Any unavoidable limitation
+8. Exact test results
+
+Most importantly:
+
+THE FINAL APPLICATION MUST BE FUNCTIONAL.
+
+Do not claim something is working unless you actually verified it.
+
+==================================================
+# 45. FINAL ARCHITECTURE TARGET
+==================================================
+
+The final application should conceptually look like this:
+
+                           USER
+                            │
+                            ▼
+                    REACT + VITE
+                 Modern Dashboard UI
+                            │
+                     REST / HTTPS
+                            │
+                            ▼
+                  NODE.JS + EXPRESS
+                  Main Application API
+                            │
+          ┌─────────────────┼──────────────────┐
+          │                 │                  │
+          ▼                 ▼                  ▼
+     PostgreSQL        AI Providers        ML API
+       / Neon         OpenAI/Gemini          │
+                                             ▼
+                                     Python + XGBoost
+                                             │
+                                      Forget Probability
+                                             │
+                                             ▼
+                                     Recommendations
+
+Deployment:
+
+                         VERCEL
+        ┌──────────────────┼──────────────────┐
+        │                  │                  │
+      React             Express          Python ML
+        │                  │                  │
+        └──────────────────┴──────────────────┘
+                           │
+                      ONE DOMAIN
+
+This is the final goal.
+
+The application should look modern, work reliably, preserve the existing LeetRecall functionality, and be simple enough for me to defend honestly in interviews.
