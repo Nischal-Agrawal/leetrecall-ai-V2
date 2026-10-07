@@ -1,0 +1,17 @@
+.env
+venv/
+retrain_env/
+test_env/
+node_modules/
+__pycache__/
+datasets/
+docs/
+backend/
+scripts/
+start_leetrecall.bat
+stop_leetrecall.bat
+ml/artifacts/*.pkl
+ml/artifacts/*.json
+task.txt
+*.db
+.git/

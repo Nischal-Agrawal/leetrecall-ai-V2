@@ -1,4 +1,2 @@
-joblib==1.5.3
-numpy==2.5.0
-pandas==3.0.3
-scikit-learn==1.9.0
+# No external dependencies required!
+# The ML model is compiled to pure python in api/ml/rf_model.py

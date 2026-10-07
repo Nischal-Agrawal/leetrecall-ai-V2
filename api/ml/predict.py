@@ -6,14 +6,12 @@ import sys
 from http.server import BaseHTTPRequestHandler
 from pathlib import Path
 
-import joblib
-import pandas as pd
-
 ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-MODEL_PATH = ROOT / "ml" / "artifacts" / "random_forest_model.pkl"
+from api.ml import rf_model
+
 FEATURE_COLUMNS = [
     "days_since_solved",
     "difficulty",
@@ -55,13 +53,18 @@ def predict(payload):
             values[name] = float(value)
             if not math.isfinite(values[name]):
                 raise ValueError(f"{name} must be a finite number")
-        rows.append(values)
+        row_list = [
+            values["days_since_solved"],
+            values["difficulty"],
+            values["wrong_attempts"],
+            values["hints_used"],
+            values["confidence_score"],
+            values["revision_count"],
+        ]
+        rows.append(row_list)
 
-    features = pd.DataFrame(rows, columns=FEATURE_COLUMNS)
-    model = joblib.load(MODEL_PATH)
-    probabilities = model.predict_proba(features)
-    classes = list(model.classes_)
-    remembered_index = classes.index(1)
+    probabilities = [rf_model.score(row) for row in rows]
+    remembered_index = 1
 
     recommendations = []
     for question, probabilities_for_question in zip(questions, probabilities):
