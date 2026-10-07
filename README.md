@@ -24,7 +24,7 @@
 
 <img src="https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
 
-<img src="https://img.shields.io/badge/XGBoost-Machine%20Learning-7928CA?style=for-the-badge"/>
+<img src="https://img.shields.io/badge/Random_Forest-Machine%20Learning-7928CA?style=for-the-badge"/>
 
 <img src="https://img.shields.io/badge/JWT-Authentication-success?style=for-the-badge"/>
 
@@ -132,7 +132,7 @@ The application follows a modular multi-layer architecture separating the React 
        /api/ml/* Python Inference Layer
                       │
                       ▼
-             Existing XGBoost + ML Logic
+        Pure Python Random Forest Evaluator
                       │
                       ▼
              PostgreSQL / Neon Database
@@ -142,11 +142,11 @@ This architecture ensures:
 
 - a single-domain user experience
 - modern frontend development with React and Vite
-- preserved Python ML pipeline without rewriting the trained model in JavaScript
+- preserved Python ML pipeline without relying on heavy data-science dependencies
 - compatibility with existing recommendation logic and database semantics
 - a deployable architecture suitable for one Vercel project with frontend and API routes under the same domain
 
-The Python inference layer is intentionally isolated to ML work. The trained XGBoost model, preprocessing logic, and recommendation artifacts remain in the existing Python codebase, while Express exposes the same functionality through app-level API routes and a serverless-compatible Python entry point in `api/ml/predict.py`.
+To bypass Vercel's strict 225 MB free-tier serverless size limit (which natively prevents deploying `scikit-learn`, `pandas`, and `xgboost`), the Python inference layer was engineered to be highly optimized. The trained Random Forest model trees were exported into a lightweight `rf.json` structure, which the `api/ml/predict.py` script traverses in pure Python without needing external ML libraries. This guarantees lightning-fast cold starts and a bundled deployment size well within Vercel's limits.
 
 - Modular backend services
 - Easy scalability
@@ -173,7 +173,7 @@ LeetRecall AI demonstrates practical integration of
 
 - Modern React + Vite frontend
 - Production-style Express backend
-- Python ML inference layer preserving the existing XGBoost flow
+- Innovative zero-dependency Python ML inference layer (JSON Tree Evaluator)
 - JWT Authentication
 - Password Hashing with bcrypt
 - PostgreSQL-ready data layer
@@ -271,10 +271,10 @@ Two supervised learning models were evaluated.
 
 | Model | Purpose |
 |--------|----------|
-| Random Forest | Baseline retention prediction |
-| XGBoost | Final recommendation model |
+| Baseline Logic | Spaced-repetition fallbacks |
+| Random Forest | Final recommendation model |
 
-After evaluation, **XGBoost** was selected due to its stronger predictive performance.
+After evaluation, **Random Forest** was selected due to its strong predictive performance and seamless translation into a low-memory, zero-dependency JSON structure for Vercel deployment.
 
 ---
 
@@ -469,9 +469,9 @@ The frontend communicates with the backend exclusively through REST APIs.
 | GET | `/api/dashboard` | Per-user dashboard analytics |
 | GET | `/api/dashboard/stats` | Legacy aggregate dashboard contract |
 | GET | `/api/questions` | Searchable database question library |
-| POST | `/api/solves` | Persist solve metrics used by XGBoost |
+| POST | `/api/solves` | Persist solve metrics used by the ML Model |
 | POST | `/api/revisions` | Persist revision history |
-| GET | `/api/recommendations` | Authenticated XGBoost revision priorities |
+| GET | `/api/recommendations` | Authenticated AI revision priorities |
 | GET | `/api/knowledge-decay` | Knowledge retention predictions |
 | GET | `/api/topic-mastery` | Per-user topic mastery |
 | GET | `/api/pattern-coverage` | Per-user pattern coverage |
@@ -528,7 +528,7 @@ LeetRecall AI is configured for one Vercel project and one public domain. The st
 | ML inference | Protected Python Vercel Function |
 | Database | Neon PostgreSQL |
 
-The browser sees only one origin. Provider keys, database credentials, JWT signing keys, and the internal ML secret are server-side environment variables.
+The browser sees only one origin. Provider keys, database credentials, JWT signing keys, and the internal ML secret are server-side environment variables. Internal server-to-server HTTP fetch calls between Node.js and Python routes forward browser cookies and Vercel edge bypass headers to seamlessly navigate preview deployment protections.
 
 ---
 # ⚙️ Technology Stack
@@ -541,11 +541,9 @@ LeetRecall AI integrates multiple technologies across frontend, backend, databas
 | Backend | Node.js + Express | REST API Framework |
 | Database | Neon PostgreSQL | Persistent Relational Database |
 | Driver | `pg` | Parameterized PostgreSQL access |
-| Machine Learning | Scikit-Learn | Model Training |
-| ML Model | XGBoost | Forget Probability Prediction |
-| Data Processing | Pandas | Data Cleaning & Analysis |
-| Numerical Computing | NumPy | Feature Processing |
-| Model Persistence | Joblib | Saving Trained Models |
+| Machine Learning | Scikit-Learn | Training environment |
+| ML Model | Random Forest | Forget Probability Prediction |
+| Inference Engine | Pure Python JSON Evaluator | Zero-dependency model execution |
 | Authentication | JWT | Secure User Authentication |
 | Password Security | bcrypt | Password Hashing |
 | Deployment | Vercel | Single-domain frontend and API |
@@ -561,7 +559,7 @@ The project keeps the original Python business logic and trained artifacts while
 leetrecall-ai
 ├── api/
 │   ├── index.js                 Express Vercel Function
-│   └── ml/predict.py            Protected Python XGBoost Function
+│   └── ml/predict.py            Protected pure-Python JSON ML function
 ├── backend/                    Preserved legacy services/models/schemas
 ├── datasets/                   Existing contest data
 ├── frontend/src/               React application
@@ -620,7 +618,7 @@ Open `http://localhost:5173`; Vite proxies `/api/*` to Express on port 5000.
 
 Import the repository as one Vercel project and configure `DATABASE_URL`, `JWT_SECRET`, `ML_INTERNAL_SECRET`, and one or both of `GEMINI_API_KEY` and `OPENAI_API_KEY` in project environment settings. `GEMINI_MODEL`, `OPENAI_MODEL`, and `ML_INFERENCE_URL` are optional. Deploy through the Vercel Git integration or `npx vercel --prod`.
 
-The browser only calls Express under `/api/*`. Express calls the Python function at `/api/ml/predict` on the same deployment origin using the server-only `ML_INTERNAL_SECRET`. The Python function rejects requests without that secret.
+The browser only calls Express under `/api/*`. Express dynamically extracts the browser's `host` domain, `cookie`, and `x-vercel-protection-bypass` headers and securely forwards them to the Python function at `/api/ml/predict`. The Python function also strictly verifies the `ML_INTERNAL_SECRET` header to ensure it cannot be invoked directly.
 
 # 🔄 End-to-End Workflow
 
@@ -635,12 +633,12 @@ The browser only calls Express under `/api/*`. Express calls the Python function
                                      ▼
                     Node.js + Express API ─────────► PostgreSQL
                                      │
-                    same-origin internal request
+                    same-origin internal authenticated request
                                      ▼
              Python Vercel ML Function
                                      │
                                      ▼
-                    Existing XGBoost model
+                   Zero-Dependency Random Forest Evaluator
 ```
 
 # 🔐 Authentication
@@ -790,7 +788,7 @@ It helps the project reach more developers and motivates future improvements.
 
 Built with ❤️ using
 
-**React • Express • PostgreSQL • Python ML • XGBoost**
+**React • Express • PostgreSQL • Vercel • Machine Learning**
 
 ---
 
