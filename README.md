@@ -660,9 +660,9 @@ Neon PostgreSQL was selected because it provides:
 
 ### Machine Learning Integration
 
-Instead of training models inside the web application, trained models are loaded and used for inference.
+Instead of running a bulky Python backend, the trained Random Forest model is exported as a lightweight JSON artifact.
 
-This reduces API latency and keeps the backend lightweight.
+This completely eliminates heavy ML dependencies (like `scikit-learn` and `pandas`) in production, reducing API latency, eliminating cold-start timeouts, and keeping the serverless footprint extremely small.
 
 ---
 
@@ -702,9 +702,8 @@ while remaining extensible for future personalization.
 
 ### Machine Learning
 
-Compared multiple supervised learning models.
-
-Selected XGBoost after evaluating prediction performance.
+- Evaluated multiple supervised learning models for knowledge retention prediction.
+- Engineered a zero-dependency Random Forest JSON tree evaluator to successfully deploy the model within Vercel's strict 225MB serverless limits without relying on heavy data-science libraries.
 
 ---
 
@@ -794,5 +793,4 @@ Built with ❤️ using
 
 *"Learn Smarter. Revise Better. Retain Longer."*
 
-</div>#   l e e t r e c a l l - a i - V 2  
- 
+</div>
