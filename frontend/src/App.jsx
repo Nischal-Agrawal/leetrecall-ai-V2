@@ -172,14 +172,14 @@ function ModelSource({ recommendations }) {
   const source = recommendations[0]?.source || recommendations.modelSource;
   if (!source) return null;
 
-  const isTrainedModel = source === 'trained-xgboost';
+  const isTrainedModel = source === 'trained-xgboost' || source === 'trained-random-forest';
   const isUnavailable = source === 'unavailable';
   return (
     <p className={`model-source ${isTrainedModel ? 'trained' : 'fallback'}`}>
       {isTrainedModel
-        ? 'XGBoost model predictions'
+        ? 'AI model predictions'
         : isUnavailable
-          ? 'XGBoost model unavailable'
+          ? 'AI model unavailable'
           : `Non-model response (${recommendations[0]?.model || source})`}
       {recommendations.modelWarning ? ` · ${recommendations.modelWarning}` : ''}
     </p>
