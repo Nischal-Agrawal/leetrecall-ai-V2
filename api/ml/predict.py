@@ -6,8 +6,12 @@ import sys
 from http.server import BaseHTTPRequestHandler
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(os.getcwd())
 RF_JSON_PATH = ROOT / "ml" / "artifacts" / "rf.json"
+if not RF_JSON_PATH.exists():
+    ROOT = Path(__file__).resolve().parents[2]
+    RF_JSON_PATH = ROOT / "ml" / "artifacts" / "rf.json"
+
 
 _rf_trees = None
 

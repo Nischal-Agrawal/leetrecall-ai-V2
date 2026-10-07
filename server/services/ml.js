@@ -35,8 +35,13 @@ export async function runPythonPredict(payload = {}) {
         signal: AbortSignal.timeout(45000),
       });
       const result = await response.json();
-      if (!response.ok || !Array.isArray(result.recommendations)) {
-        throw new Error(`ML function returned HTTP ${response.status}.`);
+      if (!response.ok) {
+        console.error('Remote Python inference failed with status', response.status, result.warning);
+        return unavailableResult(result.warning || `ML function returned HTTP ${response.status}.`);
+      }
+      if (!Array.isArray(result.recommendations)) {
+        console.error('Remote Python inference returned invalid data:', result);
+        return unavailableResult('Python inference returned invalid data.');
       }
       return result;
     } catch (error) {
