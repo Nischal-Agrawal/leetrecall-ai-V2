@@ -25,12 +25,17 @@ export async function runPythonPredict(payload = {}) {
     }
 
     try {
+      const headers = {
+        'Content-Type': 'application/json',
+        'x-ml-internal-secret': secret,
+      };
+      if (process.env.VERCEL_AUTOMATION_BYPASS_SECRET) {
+        headers['x-vercel-protection-bypass'] = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+      }
+
       const response = await fetch(inferenceUrl, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-ml-internal-secret': secret,
-        },
+        headers,
         body: JSON.stringify(payload),
         signal: AbortSignal.timeout(45000),
       });
