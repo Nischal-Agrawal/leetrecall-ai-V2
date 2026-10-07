@@ -14,7 +14,7 @@ const unavailableResult = (warning) => ({
   warning,
 });
 
-export async function runPythonPredict(payload = {}) {
+export async function runPythonPredict(req, payload = {}) {
   if (process.env.VERCEL) {
     const secret = process.env.ML_INTERNAL_SECRET;
     const inferenceUrl = process.env.ML_INFERENCE_URL
@@ -29,6 +29,10 @@ export async function runPythonPredict(payload = {}) {
         'Content-Type': 'application/json',
         'x-ml-internal-secret': secret,
       };
+      if (req && req.headers) {
+        if (req.headers.cookie) headers.cookie = req.headers.cookie;
+        if (req.headers.authorization) headers.authorization = req.headers.authorization;
+      }
       if (process.env.VERCEL_AUTOMATION_BYPASS_SECRET) {
         headers['x-vercel-protection-bypass'] = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
       }

@@ -71,7 +71,7 @@ test('Vercel ML bridge sends the internal secret and preserves model provenance'
 
   try {
     const requestPayload = { questions: [{ id: 7, difficulty: 'Hard', confidence_score: 4 }] };
-    const result = await runPythonPredict(requestPayload);
+    const result = await runPythonPredict(null, requestPayload);
     assert.deepEqual(receivedPayload, requestPayload);
     assert.equal(result.source, 'trained-random-forest');
     assert.equal(result.recommendations[0].forget_probability, 0.73);

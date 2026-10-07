@@ -73,7 +73,7 @@ const formatRecommendations = (result) => (result.recommendations || [])
 
 const getRecommendationsForUser = async (userId) => {
   const questions = await getPredictionQuestions(userId);
-  const result = await runPythonPredict({ questions });
+  const result = await runPythonPredict(null, { questions });
   return formatRecommendations(result);
 };
 
@@ -245,7 +245,7 @@ export function createApp() {
   }));
 
   app.get('/api/recommendations', authMiddleware, asyncRoute(async (req, res) => {
-    const result = await runPythonPredict({ questions: await getPredictionQuestions(req.user.userId) });
+    const result = await runPythonPredict(req, { questions: await getPredictionQuestions(req.user.userId) });
     res.set('X-ML-Source', result.source || 'unknown');
     res.set('X-ML-Model', result.model || 'unknown');
     if (result.warning) res.set('X-ML-Warning', result.warning);
@@ -253,7 +253,7 @@ export function createApp() {
   }));
 
   app.get('/api/knowledge-decay', authMiddleware, asyncRoute(async (req, res) => {
-    const result = await runPythonPredict({ questions: await getPredictionQuestions(req.user.userId) });
+    const result = await runPythonPredict(req, { questions: await getPredictionQuestions(req.user.userId) });
     res.set('X-ML-Source', result.source || 'unknown');
     if (result.warning) res.set('X-ML-Warning', result.warning);
     res.json(formatRecommendations(result));
@@ -397,12 +397,12 @@ export function createApp() {
     const requestedQuestions = Array.isArray(req.body?.questions)
       ? req.body.questions
       : await getPredictionQuestions(req.user.userId);
-    const result = await runPythonPredict({ questions: requestedQuestions });
+    const result = await runPythonPredict(req, { questions: requestedQuestions });
     res.json(result);
   }));
 
   app.get('/api/ml/predict', authMiddleware, asyncRoute(async (req, res) => {
-    const result = await runPythonPredict({ questions: await getPredictionQuestions(req.user.userId) });
+    const result = await runPythonPredict(req, { questions: await getPredictionQuestions(req.user.userId) });
     res.json(result);
   }));
 
