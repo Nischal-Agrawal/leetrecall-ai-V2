@@ -7,10 +7,27 @@ from http.server import BaseHTTPRequestHandler
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-if str(ROOT) not in sys.path:
-    sys.path.insert(0, str(ROOT))
+RF_JSON_PATH = ROOT / "ml" / "artifacts" / "rf.json"
 
-from api.ml import rf_model
+_rf_trees = None
+
+def get_rf_trees():
+    global _rf_trees
+    if _rf_trees is None:
+        with open(RF_JSON_PATH, "r") as f:
+            _rf_trees = json.load(f)
+    return _rf_trees
+
+def predict_rf(features):
+    trees = get_rf_trees()
+    probs = []
+    for t in trees:
+        n = 0
+        while t['left'][n] != -1:
+            n = t['left'][n] if features[t['feature'][n]] <= t['threshold'][n] else t['right'][n]
+        v = t['value'][n][0]
+        probs.append(v[1] / sum(v))
+    return sum(probs) / len(probs)
 
 FEATURE_COLUMNS = [
     "days_since_solved",
@@ -63,12 +80,10 @@ def predict(payload):
         ]
         rows.append(row_list)
 
-    probabilities = [rf_model.score(row) for row in rows]
-    remembered_index = 1
+    probabilities = [predict_rf(row) for row in rows]
 
     recommendations = []
-    for question, probabilities_for_question in zip(questions, probabilities):
-        remember_probability = float(probabilities_for_question[remembered_index])
+    for question, remember_probability in zip(questions, probabilities):
         recommendations.append({
             **question,
             "question_id": question.get("question_id", question.get("id", question.get("title", "Untitled"))),

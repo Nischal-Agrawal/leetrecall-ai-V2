@@ -10,7 +10,6 @@ scripts/
 start_leetrecall.bat
 stop_leetrecall.bat
 ml/artifacts/*.pkl
-ml/artifacts/*.json
 task.txt
 *.db
 .git/

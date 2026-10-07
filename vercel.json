@@ -22,7 +22,8 @@
       "includeFiles": "datasets/contest/sample_contest.csv"
     },
     "api/ml/predict.py": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "includeFiles": "ml/artifacts/rf.json"
     }
   }
 }
