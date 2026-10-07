@@ -17,8 +17,15 @@ const unavailableResult = (warning) => ({
 export async function runPythonPredict(req, payload = {}) {
   if (process.env.VERCEL) {
     const secret = process.env.ML_INTERNAL_SECRET;
-    const inferenceUrl = process.env.ML_INFERENCE_URL
-      || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}/api/ml/predict` : null);
+    
+    let inferenceUrl = process.env.ML_INFERENCE_URL;
+    if (!inferenceUrl) {
+      const host = (req && req.headers && req.headers.host) || process.env.VERCEL_URL;
+      const protocol = (req && req.headers && req.headers['x-forwarded-proto']) || 'https';
+      if (host) {
+        inferenceUrl = `${protocol}://${host}/api/ml/predict`;
+      }
+    }
 
     if (!secret || !inferenceUrl) {
       return unavailableResult('Vercel ML_INFERENCE_URL and ML_INTERNAL_SECRET must be configured.');
@@ -32,6 +39,7 @@ export async function runPythonPredict(req, payload = {}) {
       if (req && req.headers) {
         if (req.headers.cookie) headers.cookie = req.headers.cookie;
         if (req.headers.authorization) headers.authorization = req.headers.authorization;
+        if (req.headers['x-vercel-protection-bypass']) headers['x-vercel-protection-bypass'] = req.headers['x-vercel-protection-bypass'];
       }
       if (process.env.VERCEL_AUTOMATION_BYPASS_SECRET) {
         headers['x-vercel-protection-bypass'] = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
