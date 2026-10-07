@@ -4,7 +4,6 @@ retrain_env/
 test_env/
 node_modules/
 __pycache__/
-datasets/
 docs/
 backend/
 scripts/
