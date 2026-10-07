@@ -53,8 +53,8 @@ test('Vercel ML bridge sends the internal secret and preserves model provenance'
     receivedPayload = JSON.parse(Buffer.concat(chunks).toString('utf8'));
     response.writeHead(200, { 'Content-Type': 'application/json' });
     response.end(JSON.stringify({
-      model: 'xgboost',
-      source: 'trained-xgboost',
+      model: 'random-forest',
+      source: 'trained-random-forest',
       recommendations: [{ question_id: 7, forget_probability: 0.73 }],
     }));
   });
@@ -73,7 +73,7 @@ test('Vercel ML bridge sends the internal secret and preserves model provenance'
     const requestPayload = { questions: [{ id: 7, difficulty: 'Hard', confidence_score: 4 }] };
     const result = await runPythonPredict(requestPayload);
     assert.deepEqual(receivedPayload, requestPayload);
-    assert.equal(result.source, 'trained-xgboost');
+    assert.equal(result.source, 'trained-random-forest');
     assert.equal(result.recommendations[0].forget_probability, 0.73);
   } finally {
     if (previousEnvironment.vercel === undefined) delete process.env.VERCEL;
@@ -145,10 +145,10 @@ test('PostgreSQL signup and solve history feed trained model recommendations', {
     const recommendations = await response.json();
 
     assert.equal(response.status, 200);
-    assert.equal(response.headers.get('x-ml-source'), 'trained-xgboost');
-    assert.equal(response.headers.get('x-ml-model'), 'xgboost');
+    assert.equal(response.headers.get('x-ml-source'), 'trained-random-forest');
+    assert.equal(response.headers.get('x-ml-model'), 'random-forest');
     assert.equal(recommendations.length, 1);
-    assert.ok(recommendations.every((item) => item.source === 'trained-xgboost'));
+    assert.ok(recommendations.every((item) => item.source === 'trained-random-forest'));
     assert.ok(recommendations.every((item) => Number.isFinite(item.forget_probability)));
 
     const dashboardResponse = await fetch(`${baseUrl}/api/dashboard`, { headers });
@@ -164,7 +164,7 @@ test('PostgreSQL signup and solve history feed trained model recommendations', {
 
     const decayResponse = await fetch(`${baseUrl}/api/knowledge-decay`, { headers });
     assert.equal(decayResponse.status, 200);
-    assert.equal(decayResponse.headers.get('x-ml-source'), 'trained-xgboost');
+    assert.equal(decayResponse.headers.get('x-ml-source'), 'trained-random-forest');
 
     const plannerResponse = await fetch(`${baseUrl}/api/interview-planner`, { headers });
     assert.equal(plannerResponse.status, 400);

@@ -9,7 +9,7 @@ const pythonScript = path.join(projectRoot, 'api', 'ml', 'predict.py');
 
 const unavailableResult = (warning) => ({
   source: 'unavailable',
-  model: 'xgboost',
+  model: 'random-forest',
   recommendations: [],
   warning,
 });

@@ -23,7 +23,7 @@
     },
     "api/ml/predict.py": {
       "maxDuration": 60,
-      "includeFiles": "ml/artifacts/xgboost_model.pkl"
+      "includeFiles": "ml/artifacts/random_forest_model.pkl"
     }
   }
 }

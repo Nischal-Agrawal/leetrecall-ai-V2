@@ -13,7 +13,7 @@ ROOT = Path(__file__).resolve().parents[2]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-MODEL_PATH = ROOT / "ml" / "artifacts" / "xgboost_model.pkl"
+MODEL_PATH = ROOT / "ml" / "artifacts" / "random_forest_model.pkl"
 FEATURE_COLUMNS = [
     "days_since_solved",
     "difficulty",
@@ -32,8 +32,8 @@ def predict(payload):
 
     if not questions:
         return {
-            "model": "xgboost",
-            "source": "trained-xgboost",
+            "model": "random-forest",
+            "source": "trained-random-forest",
             "recommendations": [],
         }
 
@@ -74,8 +74,8 @@ def predict(payload):
 
     recommendations.sort(key=lambda item: item["forget_probability"], reverse=True)
     return {
-        "model": "xgboost",
-        "source": "trained-xgboost",
+        "model": "random-forest",
+        "source": "trained-random-forest",
         "recommendations": recommendations[:10],
     }
 
@@ -88,7 +88,7 @@ def main():
         response = predict(payload)
     except Exception as error:
         response = {
-            "model": "xgboost",
+            "model": "random-forest",
             "source": "unavailable",
             "recommendations": [],
             "warning": f"Trained model inference failed: {error}",
@@ -126,7 +126,7 @@ class handler(BaseHTTPRequestHandler):
             self.send_error(400, "Invalid JSON")
         except Exception as error:
             encoded = json.dumps({
-                "model": "xgboost",
+                "model": "random-forest",
                 "source": "unavailable",
                 "recommendations": [],
                 "warning": f"Trained model inference failed: {error}",
